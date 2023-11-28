@@ -22,6 +22,7 @@ import { Delete } from "@mui/icons-material";
 import axios from "axios";
 import CustomLoader from "../components/customLoader/CustomLoader";
 import { BeatLoader } from "react-spinners";
+import { Helmet } from "react-helmet";
 
 const SalesmanTask = () => {
   const [selectedCards, setSelectedCards] = useState([]);
@@ -112,11 +113,14 @@ const SalesmanTask = () => {
 
   return (
     <AdminLayout title={"Fillter task"}>
+      <Helmet>
+        <title>Fillter task</title>
+      </Helmet>
       {loading ? (
         <CustomLoader />
       ) : (
         <Grid container spacing={1}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <h4>Salesman</h4>
             <div>
               <Select
@@ -143,7 +147,7 @@ const SalesmanTask = () => {
               </Select>
             </div>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <h4>Date</h4>
             <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -158,19 +162,23 @@ const SalesmanTask = () => {
                     />
                   )}
                   disablePast
+                  slotProps={{ textField: { fullWidth: true } }}
                   // Add more props for customization
                 />
               </LocalizationProvider>
-              <Button
-                onClick={handleSubmit}
-                variant="contained"
-                size="large"
-                sx={{ m: 1, ml: 3 }}
-                disabled={submiting}
-              >
-                {submiting ? <BeatLoader color="#ff0000" /> : "Submit"}
-              </Button>
             </div>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              size="large"
+              fullWidth
+              disabled={submiting}
+              sx={{ mt: 8 }}
+            >
+              {submiting ? <BeatLoader color="#ff0000" /> : "Submit"}
+            </Button>
           </Grid>
           <Grid item xs={12}>
             <h4>Assign shpos</h4>
@@ -218,7 +226,7 @@ const SalesmanTask = () => {
                         />
                       )}
                     </div>
-                    <Box textAlign={"right"} mt={1} >
+                    <Box textAlign={"right"} mt={1}>
                       <IconButton onClick={() => taskDeleteHandle(item.id)}>
                         <Delete
                           sx={{

@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import CustomLoader from "../components/customLoader/CustomLoader";
 import { BeatLoader } from "react-spinners";
+import { Helmet } from "react-helmet";
 
 const DateRange = () => {
   const [salesman, setSalesman] = useState([]);
@@ -102,6 +103,10 @@ const DateRange = () => {
 
   return (
     <AdminLayout title={"Date range"}>
+      
+      <Helmet>
+        <title>Date range assign</title>
+      </Helmet>
       {loading ? (
         <CustomLoader />
       ) : (
@@ -150,6 +155,7 @@ const DateRange = () => {
                         label="Custom Date"
                       />
                     )}
+                    slotProps={{ textField: { fullWidth: true } }}
                     disablePast
                     // Add more props for customization
                   />
@@ -163,9 +169,10 @@ const DateRange = () => {
               onClick={handleSubmit}
               variant="contained"
               size="large"
+              sx={{ mt: 3 }}
               disabled={isSubmitting}
             >
-              {isSubmitting ? <BeatLoader color="#ff0000" /> : "Login"}
+              {isSubmitting ? <BeatLoader color="#ff0000" /> : "Submit"}
             </Button>
           </Grid>
         </Grid>

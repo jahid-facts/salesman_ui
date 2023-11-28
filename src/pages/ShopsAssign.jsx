@@ -8,13 +8,15 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 const ShopsAssign = () => {
   const [selectedCards, setSelectedCards] = useState([]);
   const [shopList, setShopList] = useState([]);
   const [salesman, setSalesman] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setisSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
   const handleCardClick = (cardId, isSelected) => {
@@ -66,6 +68,7 @@ const ShopsAssign = () => {
   }, []);
 
   const handleSubmit = async () => {
+    setisSubmitting(true);
     try {
       const data = {
         shop_id: selectedCards,
@@ -85,13 +88,18 @@ const ShopsAssign = () => {
       } else {
         toast.error("An unexpected error occurred");
       }
+    } finally {
+      setisSubmitting(false);
     }
   };
 
   return (
     <AdminLayout title={"Shops Assign"}>
+    <Helmet>
+      <title>Shops assign</title>
+    </Helmet>
       <Grid container spacing={1}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           <h4>Salesman</h4>
           <div>
             <Select
@@ -106,7 +114,9 @@ const ShopsAssign = () => {
               {salesman &&
                 salesman.length > 0 &&
                 salesman
-                  .filter((user) => user.status === "active")
+                  .filter(
+                    (data) => data.role !== "admin" && data.status === "active"
+                  )
                   .map((user) => (
                     <MenuItem key={user.id} value={user.id}>
                       {user.name}
@@ -115,7 +125,7 @@ const ShopsAssign = () => {
             </Select>
           </div>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           <h4>Date</h4>
           <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -130,18 +140,23 @@ const ShopsAssign = () => {
                   />
                 )}
                 disablePast
+                slotProps={{ textField: { fullWidth: true } }}
                 // Add more props for customization
               />
             </LocalizationProvider>
-            <Button
-              onClick={handleSubmit}
-              variant="contained"
-              size="large"
-              sx={{ m: 1, ml: 3 }}
-            >
-              Submit
-            </Button>
           </div>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            size="large"
+            sx={{ mt: 8 }}
+            fullWidth
+            disabled={isSubmitting}
+          >
+            Submit
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <h4>Select shpos</h4>

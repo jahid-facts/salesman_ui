@@ -10,6 +10,7 @@ import TransitionsModal from "../components/Modal";
 import { ExcelFileUpload } from "../components/ExcelFileUpload";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Helmet } from "react-helmet";
 
 const ShopsList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -158,12 +159,15 @@ const ShopsList = () => {
   const handleOpen = () => setOpen(true);
 
   return (
-    <AdminLayout title={"Shops List"}>
+    <AdminLayout title={"Shops list"}>
+    <Helmet>
+      <title>Shops list</title>
+    </Helmet>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Button
             variant="outlined"
-            sx={{ textTransform: "capitalize" }}
+            sx={{ textTransform: "capitalize", mb: 2 }}
             onClick={handleOpen}
           >
             Add Shops

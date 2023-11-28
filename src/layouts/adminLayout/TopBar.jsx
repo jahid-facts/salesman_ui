@@ -69,7 +69,7 @@ const TopBar = ({ setOpen, open, title }) => {
                 <Box display={"flex"} alignItems={"center"}>
                   <Box
                     sx={{
-                      pl: "20px",
+                      pl: "10px",
                       marginRight: "30px",
                       display: {
                         xs: "none",

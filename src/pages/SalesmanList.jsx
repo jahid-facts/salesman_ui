@@ -9,6 +9,7 @@ import CustomLoader from "../components/customLoader/CustomLoader";
 import axios from "axios";
 import TransitionsModal from "../components/Modal";
 import * as Yup from "yup";
+import { Helmet } from "react-helmet";
 
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -203,11 +204,15 @@ const SalesmanList = () => {
 
   return (
     <AdminLayout title={"Salesman List"}>
+      
+      <Helmet>
+        <title>Salesman list</title>
+      </Helmet>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Button
             variant="outlined"
-            sx={{ textTransform: "capitalize" }}
+            sx={{ textTransform: "capitalize", mb: 2 }}
             onClick={handleOpen}
           >
             Add Salesman

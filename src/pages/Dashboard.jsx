@@ -5,6 +5,7 @@ import AdminLayout from "../layouts/adminLayout/AdminLayout";
 import { getApi } from "../config/configAxios";
 import { toast } from "react-toastify";
 import CustomLoader from "../components/customLoader/CustomLoader";
+import { Helmet } from "react-helmet";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -34,6 +35,9 @@ const Dashboard = () => {
 
   return (
     <AdminLayout title="Dashboard">
+      <Helmet>
+        <title>Dashboard</title>
+      </Helmet>
       {loading ? (
         <CustomLoader />
       ) : (
