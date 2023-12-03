@@ -93,7 +93,7 @@ const Dashboard = () => {
           <Grid item xs={12} md={4}>
             <DashboardCard
               icon={"tdesign:building"}
-              title={"Active shops"}
+              title={"Disabled shops"}
               subTitle={"Total"}
               countNumber={dashboardData?.disabledShops}
               color={"#EA2027"}
