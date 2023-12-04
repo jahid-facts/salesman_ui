@@ -10,6 +10,7 @@ import axios from "axios";
 import TransitionsModal from "../components/Modal";
 import * as Yup from "yup";
 import { Helmet } from "react-helmet";
+import Swal from "sweetalert2";
 
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -41,33 +42,100 @@ const SalesmanList = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   // handle action
   const handleAction = async (actionType) => {
-    setLoading(true);
     try {
       switch (actionType) {
         case "delete":
-          await axios.delete(`delete-user/${itemId}`);
-          toast.success("Salesman has been deleted");
+          Swal.fire({
+            title: "Confirm delete",
+            text: "Are you sure you want to delete this user?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              try {
+                await axios
+                  .delete(`delete-user/${itemId}`)
+                  .then((res) => {
+                    toast.success(res.data?.message);
+                  })
+                  .catch((err) => {
+                    toast.error("An error occurred while updating status");
+                  })
+                  .finally(() => {
+                    fetchData();
+                  });
+              } catch (error) {
+                Swal.fire(
+                  "Error",
+                  "An error occurred while delete the user.",
+                  "error"
+                );
+              }
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+              Swal.fire("Cancelled", "The user was not deleted.", "info");
+            }
+          });
+          break;
+        case "empty_deviceId":
+          Swal.fire({
+            title: "Confirm empty device id",
+            text: "Are you sure you want to active this empty device id?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, empty it!",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              try {
+                await axios
+                  .post(`empty-deviceId-user/${itemId}`)
+                  .then((res) => {
+                    toast.success(res.data?.message);
+                  })
+                  .catch((err) => {
+                    toast.error("An error occurred while updating status");
+                  })
+                  .finally(() => {
+                    fetchData();
+                  });
+              } catch (error) {
+                Swal.fire(
+                  "Error",
+                  "An error occurred while  empty device id the shop.",
+                  "error"
+                );
+              }
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+              Swal.fire("Cancelled", "The user device id was not empty.", "info");
+            }
+          });
+
           break;
         default:
           await putApi(`status-user/${itemId}`, { status: actionType });
           toast.success("Salesman status has been updated");
       }
-      fetchData();
     } catch (error) {
       console.error("An error occurred while updating status.", error);
     } finally {
+      fetchData();
       handleMenuClose();
-      setLoading(false);
     }
   };
 
   const actionItems = [
+    { type: "empty_deviceId" },
     { type: "active" },
     { type: "disabled" },
     { type: "delete" },
@@ -77,6 +145,7 @@ const SalesmanList = () => {
     { field: "id", headerName: "ID", width: 70 },
     { field: "username", headerName: "Username", width: 150 },
     { field: "email", headerName: "Email", width: 200 },
+    { field: "deviceId", headerName: "Device Id", width: 200 },
     {
       field: "status",
       headerName: "Status",
@@ -128,6 +197,7 @@ const SalesmanList = () => {
         id: index + 1,
         username: data.name || "",
         email: data.email || "",
+        deviceId: data?.deviceId || "",
         status: data.status || "Active",
       }));
 
@@ -185,15 +255,17 @@ const SalesmanList = () => {
           number: values.number,
           email: values.email,
         };
-        const response = await postApi("/add-user", formData);
-
-        if (response.status === 200) {
-          fetchData();
-          setOpen(false);
-          toast.success("User uploaded successfully");
-          setSubmitting(false);
-          action.resetForm();
-        }
+        await postApi("/add-user", formData)
+          .then((res) => {
+            fetchData();
+            setOpen(false);
+            toast.success("User uploaded successfully");
+            setSubmitting(false);
+            action.resetForm();
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data[0] || "User uploaded failed");
+          });
       } catch (error) {
         setSubmitting(false);
       }
@@ -204,7 +276,6 @@ const SalesmanList = () => {
 
   return (
     <AdminLayout title={"Salesman List"}>
-      
       <Helmet>
         <title>Salesman list</title>
       </Helmet>

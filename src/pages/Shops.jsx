@@ -11,6 +11,7 @@ import { ExcelFileUpload } from "../components/ExcelFileUpload";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { Helmet } from "react-helmet";
+import Swal from "sweetalert2";
 
 const ShopsList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -46,12 +47,42 @@ const ShopsList = () => {
 
   // handle action
   const handleAction = async (actionType) => {
-    setLoading(true);
     try {
       switch (actionType) {
         case "delete":
-          await axios.delete(`delete-shop/${itemId}`);
-          toast.success("Shop has been deleted");
+          Swal.fire({
+            title: "Confirm Delete",
+            text: "Are you sure you want to active this shop?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              try {
+                await axios
+                  .delete(`delete-shop/${itemId}`)
+                  .then((res) => {
+                    toast.success(res.data?.message);
+                  })
+                  .catch((err) => {
+                    toast.error("An error occurred while deleting");
+                  })
+                  .finally(() => {
+                    fetchData();
+                  });
+              } catch (error) {
+                Swal.fire(
+                  "Error",
+                  "An error occurred while delete the item.",
+                  "error"
+                );
+              }
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+              Swal.fire("Cancelled", "The shop was not disabled.", "info");
+            }
+          });
           break;
         default:
           await putApi(`status-shop/${itemId}`, { status: actionType });
@@ -62,7 +93,6 @@ const ShopsList = () => {
       console.error("An error occurred while updating status.", error);
     } finally {
       handleMenuClose();
-      setLoading(false);
     }
   };
 
@@ -160,9 +190,9 @@ const ShopsList = () => {
 
   return (
     <AdminLayout title={"Shops list"}>
-    <Helmet>
-      <title>Shops list</title>
-    </Helmet>
+      <Helmet>
+        <title>Shops list</title>
+      </Helmet>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Button
