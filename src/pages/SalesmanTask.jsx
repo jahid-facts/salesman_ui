@@ -218,7 +218,7 @@ const SalesmanTask = () => {
                         gutterBottom
                         fontSize={"14px"}
                       >
-                        Distance : {item?.distance}
+                        Distance : {item?.distance} m
                       </Typography>
                     )}
                   </Box>
