@@ -77,9 +77,10 @@ const ShopsAssign = () => {
       };
       const response = await postApi("task-assign", data);
       toast.success(response.data.message);
+      // Reset form fields after successful submission
       setSelectedUser("");
       setSelectedDate(null);
-      setSelectedCards([]);
+     
     } catch (error) {
       if (error.response) {
         toast.error(error.response.data[0]);
@@ -95,9 +96,9 @@ const ShopsAssign = () => {
 
   return (
     <AdminLayout title={"Shops Assign"}>
-    <Helmet>
-      <title>Shops assign</title>
-    </Helmet>
+      <Helmet>
+        <title>Shops assign</title>
+      </Helmet>
       <Grid container spacing={1}>
         <Grid item xs={12} md={4}>
           <h4>Salesman</h4>
@@ -130,7 +131,7 @@ const ShopsAssign = () => {
           <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                value={null}
+                value={selectedDate ? dayjs(selectedDate) : null}
                 onChange={handleDateChange}
                 renderInput={(props) => (
                   <TextField

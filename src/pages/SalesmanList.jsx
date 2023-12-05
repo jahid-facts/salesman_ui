@@ -117,7 +117,11 @@ const SalesmanList = () => {
                 );
               }
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-              Swal.fire("Cancelled", "The user device id was not empty.", "info");
+              Swal.fire(
+                "Cancelled",
+                "The user device id was not empty.",
+                "info"
+              );
             }
           });
 

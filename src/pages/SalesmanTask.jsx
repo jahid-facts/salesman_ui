@@ -161,7 +161,6 @@ const SalesmanTask = () => {
                       label="Custom Date"
                     />
                   )}
-                  disablePast
                   slotProps={{ textField: { fullWidth: true } }}
                   // Add more props for customization
                 />
@@ -213,6 +212,15 @@ const SalesmanTask = () => {
                     >
                       Date : {item.assign_date}
                     </Typography>
+                    {item?.status === "completed" && item?.distance && (
+                      <Typography
+                        color="text.secondary"
+                        gutterBottom
+                        fontSize={"14px"}
+                      >
+                        Distance : {item?.distance}
+                      </Typography>
+                    )}
                   </Box>
                   <Box>
                     <div>

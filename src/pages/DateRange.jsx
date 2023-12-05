@@ -103,7 +103,6 @@ const DateRange = () => {
 
   return (
     <AdminLayout title={"Date range"}>
-      
       <Helmet>
         <title>Date range assign</title>
       </Helmet>
@@ -156,7 +155,6 @@ const DateRange = () => {
                       />
                     )}
                     slotProps={{ textField: { fullWidth: true } }}
-                    disablePast
                     // Add more props for customization
                   />
                 </LocalizationProvider>
