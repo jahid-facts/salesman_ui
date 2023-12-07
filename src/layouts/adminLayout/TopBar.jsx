@@ -18,6 +18,7 @@ const TopBar = ({ setOpen, open, title }) => {
         display={"flex"}
         justifyContent={"space-between"}
         alignItems={"center"}
+        
       >
         <Grid container spacing={2} alignItems="center">
           {/* First Box */}

@@ -24,11 +24,13 @@ const AdminLayout = ({ children, title }) => {
           left="0"
           right="0"
           bottom="0"
+          zIndex={99}
         ></Box>
       )}
       <SideBar setOpen={setDrawerOpen} open={drawerOpen} />
       <Box
-        p={4}
+        px={2}
+        py={2}
         sx={{
           background: "#f4f9ff",
           minHeight: "100vh",

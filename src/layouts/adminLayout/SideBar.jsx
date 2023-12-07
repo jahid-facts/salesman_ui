@@ -16,6 +16,8 @@ import { theme } from "../../theme";
 import { Link, useLocation } from "react-router-dom";
 import sidebarContent from "./SideBarContent";
 import { Icon } from "@iconify/react";
+import logo from "../../assets/Bengal.png";
+
 
 const SideBar = ({ setOpen, open }) => {
   const isMdScreen = useMediaQuery((theme) => theme.breakpoints.up("md"));
@@ -103,9 +105,7 @@ const SideBar = ({ setOpen, open }) => {
             <Box sx={{ p: "20px", textAlign: "center" }}>
               <Link to={"/"}>
                 <img
-                  src={
-                    "https://images.vexels.com/media/users/3/142789/isolated/preview/2bfb04ad814c4995f0c537c68db5cd0b-multicolor-swirls-circle-logo.png"
-                  }
+                  src={logo}
                   alt=""
                   height={"75px"}
                 />

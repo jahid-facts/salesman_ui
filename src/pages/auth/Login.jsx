@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import { clearMessage, loginUser } from "../../redux/features/AuthSlice";
+import logo from "../../assets/Bengal.png";
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -96,7 +97,7 @@ const LoginScreen = () => {
       minHeight="100vh"
       bgcolor={"#e7e7e7"}
     >
-      <Box p={4}>
+      <Box p={2}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
             <Box
@@ -105,12 +106,10 @@ const LoginScreen = () => {
               alignItems="center"
               minHeight="100%"
             >
-              <Box p={1}>
+              <Box>
                 <Link to={"/"}>
                   <img
-                    src={
-                      "https://images.vexels.com/media/users/3/142789/isolated/preview/2bfb04ad814c4995f0c537c68db5cd0b-multicolor-swirls-circle-logo.png"
-                    }
+                    src={logo}
                     alt="Airbnb Logo"
                     style={{
                       height: "100px",
@@ -119,8 +118,9 @@ const LoginScreen = () => {
                     }}
                   />
                 </Link>
-                <Box p={1}></Box>
-                <p>Explore the ideas throughtout the world</p>
+                <Box p={1}>
+                  <p>Bengal Trading (M) SDN. BHD.</p>
+                </Box>
               </Box>
             </Box>
           </Grid>
@@ -216,7 +216,7 @@ const LoginScreen = () => {
                   type="submit"
                   disabled={isSubmitting}
                   variant="contained"
-                  color="warning"
+                  color="secondary"
                   sx={{ textTransform: "capitalize", mt: 2, color: "#fff" }}
                 >
                   {isSubmitting ? <BeatLoader color="#ff0000" /> : "Login"}
