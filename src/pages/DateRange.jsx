@@ -87,8 +87,6 @@ const DateRange = () => {
     }
   };
 
-  console.log("selectedUser", selectedUser);
-  console.log("findUser", findUser);
   const dayLabels = [
     "Day 1",
     "Day 2",

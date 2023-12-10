@@ -48,7 +48,7 @@ const Dashboard = () => {
           <Grid item xs={12} md={4}>
             <DashboardCard
               icon={"streamline:shopping-store-2-store-shop-shops-stores"}
-              title={"Shpos"}
+              title={"Shops"}
               subTitle={"Total"}
               countNumber={dashboardData?.shops}
               color={"#2980b9"}

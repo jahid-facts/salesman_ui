@@ -62,7 +62,7 @@ const ShopsList = () => {
             if (result.isConfirmed) {
               try {
                 await axios
-                  .delete(`delete-shop/${itemId}`)
+                  .delete(`${process.env.REACT_APP_API_BASE_URL}delete-shop/${itemId}`)
                   .then((res) => {
                     toast.success(res.data?.message);
                   })
@@ -104,9 +104,11 @@ const ShopsList = () => {
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "name", headerName: "Shop name", width: 150 },
+    { field: "name", headerName: "Shop name", width: 200 },
     { field: "shopCode", headerName: "Shop Code", width: 150 },
     { field: "address", headerName: "Address", width: 200 },
+    { field: "rc", headerName: "RC", width: 100 },
+    { field: "number", headerName: "Number", width: 200 },
     {
       field: "status",
       headerName: "Status",
@@ -154,6 +156,8 @@ const ShopsList = () => {
       name: data.name || "",
       shopCode: data.shop_code || "",
       address: data.address || "",
+      rc: data?.rc || "",
+      number: data?.number || "",
       status: data.status || "Active",
     }));
 

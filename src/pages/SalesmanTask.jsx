@@ -96,7 +96,7 @@ const SalesmanTask = () => {
     }
 
     try {
-      const response = await axios.delete(`task-delete/${itemId}`);
+      const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}task-delete/${itemId}`);
 
       // If you want to update the UI immediately, you can do something like this:
       const updatedShopList = shopList.filter((item) => item.id !== itemId);
@@ -203,15 +203,32 @@ const SalesmanTask = () => {
                       fontSize={"16px"}
                       py={"5px"}
                     >
-                      {item.assign_by_shop.name}
+                      {item.assign_by_shop?.name}
                     </Typography>
                     <Typography
                       color="text.secondary"
                       gutterBottom
                       fontSize={"14px"}
                     >
-                      Date : {item.assign_date}
+                      <b> Address :</b> {item?.assign_by_shop?.address}
                     </Typography>
+                    <Box display={"flex"}>
+                      <Typography
+                        color="text.secondary"
+                        gutterBottom
+                        fontSize={"14px"}
+                        sx={{ mr: 2 }}
+                      >
+                        <b> Date :</b> {item?.assign_date}
+                      </Typography>
+                      <Typography
+                        color="text.secondary"
+                        gutterBottom
+                        fontSize={"14px"}
+                      >
+                        <b>RC :</b> {item?.assign_by_shop?.rc}
+                      </Typography>
+                    </Box>
                     {item?.status === "completed" && item?.distance && (
                       <Typography
                         color="text.secondary"

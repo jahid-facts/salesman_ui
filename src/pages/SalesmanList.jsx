@@ -22,6 +22,13 @@ const SalesmanList = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [userEdit, setUserEdit] = useState(false);
+
+  // updated password
+  const [openEditPassword, setOpenEditPassword] = useState(false);
+  const [updatePassword, setUpdatePassword] = useState("");
+  const [loadingEditPassword, setLoadingEditPassword] = useState(false);
 
   const handleMenuOpen = (event, itemId) => {
     setAnchorEl(event.currentTarget);
@@ -64,7 +71,9 @@ const SalesmanList = () => {
             if (result.isConfirmed) {
               try {
                 await axios
-                  .delete(`delete-user/${itemId}`)
+                  .delete(
+                    `${process.env.REACT_APP_API_BASE_URL}delete-user/${itemId}`
+                  )
                   .then((res) => {
                     toast.success(res.data?.message);
                   })
@@ -99,7 +108,9 @@ const SalesmanList = () => {
             if (result.isConfirmed) {
               try {
                 await axios
-                  .post(`empty-deviceId-user/${itemId}`)
+                  .post(
+                    `${process.env.REACT_APP_API_BASE_URL}empty-deviceId-user/${itemId}`
+                  )
                   .then((res) => {
                     toast.success(res.data?.message);
                   })
@@ -126,6 +137,30 @@ const SalesmanList = () => {
           });
 
           break;
+        case "edit":
+          try {
+            await axios
+              .get(`${process.env.REACT_APP_API_BASE_URL}users/${itemId}`)
+              .then((res) => {
+                setUserEdit(res?.data?.user);
+                setOpenEdit(true);
+              })
+              .catch((err) => {
+                toast.error("An error occurred while updating status");
+              });
+          } catch (error) {
+            Swal.fire(
+              "Error",
+              "An error occurred while  empty device id the shop.",
+              "error"
+            );
+          }
+
+          break;
+        case "password":
+          setOpenEditPassword(true);
+
+          break;
         default:
           await putApi(`status-user/${itemId}`, { status: actionType });
           toast.success("Salesman status has been updated");
@@ -140,6 +175,8 @@ const SalesmanList = () => {
 
   const actionItems = [
     { type: "empty_deviceId" },
+    { type: "edit" },
+    { type: "password" },
     { type: "active" },
     { type: "disabled" },
     { type: "delete" },
@@ -149,7 +186,8 @@ const SalesmanList = () => {
     { field: "id", headerName: "ID", width: 70 },
     { field: "username", headerName: "Username", width: 150 },
     { field: "email", headerName: "Email", width: 200 },
-    { field: "deviceId", headerName: "Device Id", width: 200 },
+    { field: "deviceId", headerName: "Device Id", width: 150 },
+    { field: "number", headerName: "Number", width: 200 },
     {
       field: "status",
       headerName: "Status",
@@ -202,6 +240,7 @@ const SalesmanList = () => {
         username: data.name || "",
         email: data.email || "",
         deviceId: data?.deviceId || "",
+        number: data?.number || "",
         status: data.status || "Active",
       }));
 
@@ -278,6 +317,80 @@ const SalesmanList = () => {
 
   const handleOpen = () => setOpen(true);
 
+  // edit user
+  const [editLoading, setEditLoading] = useState(false);
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    number: "",
+  });
+
+  useEffect(() => {
+    // Update userData when userEdit changes
+    if (userEdit) {
+      setUserData({
+        name: userEdit.name || "",
+        email: userEdit.email || "",
+        number: userEdit.number || "",
+      });
+    }
+  }, [userEdit]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSubmitEdit = async () => {
+    setEditLoading(true);
+
+    try {
+      const data = {
+        name: userData.name,
+        email: userData.email,
+        number: userData.number,
+      };
+
+      await axios.put(
+        `${process.env.REACT_APP_API_BASE_URL}update-user/${userEdit.id}`,
+        data
+      );
+
+      toast.success("User updated successfully");
+      setOpenEdit(false);
+      fetchData();
+    } catch (err) {
+      toast.error("Submission failed");
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  // update password
+  const handleSubmitEditPassword = async () => {
+    setLoadingEditPassword(true);
+    if (updatePassword.length < 6) {
+      toast.error("Password must have a minimum of 6 characters");
+      setLoadingEditPassword(false);
+      return;
+    }
+
+    try {
+      await axios.put(
+        `${process.env.REACT_APP_API_BASE_URL}update-user-password/${userEdit.id}`,
+        {
+          password: updatePassword,
+        }
+      );
+
+      toast.success("User password updated successfully");
+      setOpenEditPassword(false);
+    } catch (err) {
+      toast.error("Submission failed");
+    } finally {
+      setLoadingEditPassword(false);
+    }
+  };
   return (
     <AdminLayout title={"Salesman List"}>
       <Helmet>
@@ -292,6 +405,78 @@ const SalesmanList = () => {
           >
             Add Salesman
           </Button>
+          {/* salesman edit  */}
+          <TransitionsModal
+            title={"Edit user"}
+            handleSubmit={handleSubmitEdit}
+            open={openEdit}
+            setOpen={setOpenEdit}
+            isSubmitting={editLoading}
+          >
+            <form onSubmit={handleSubmitEdit}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    id="name"
+                    label="Name"
+                    name="name"
+                    value={userData.name}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    value={userData.email}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    id="number"
+                    label="Number"
+                    name="number"
+                    value={userData.number}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+              </Grid>
+            </form>
+          </TransitionsModal>
+
+          {/* password  */}
+          <TransitionsModal
+            title={"Update password"}
+            handleSubmit={handleSubmitEditPassword}
+            open={openEditPassword}
+            setOpen={setOpenEditPassword}
+            isSubmitting={loadingEditPassword}
+          >
+            <form onSubmit={handleSubmitEdit}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    fullWidth
+                    id="password"
+                    label="Password Address"
+                    name="passwordEdit"
+                    value={updatePassword}
+                    onChange={(e) => setUpdatePassword(e.target.value)}
+                  />
+                </Grid>
+              </Grid>
+            </form>
+          </TransitionsModal>
+
           <TransitionsModal
             title={"Add user"}
             handleSubmit={handleSubmit}

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
 import { Box } from "@mui/material";
 
-const CheckboxCard = ({ id, title, shopCode, onCardClick }) => {
+const CheckboxCard = ({ id, title, shopCode, onCardClick, rc, address }) => {
   const [isActive, setIsActive] = useState(false);
 
   const handleCardClick = () => {
@@ -33,8 +33,22 @@ const CheckboxCard = ({ id, title, shopCode, onCardClick }) => {
           >
             {title}
           </Typography>
+          <Box display={"flex"}>
+            <Typography
+              color="text.secondary"
+              gutterBottom
+              fontSize={"14px"}
+              sx={{ mr: 2 }}
+            >
+             <b> Shop code :</b> {shopCode}
+            </Typography>
+            <Typography color="text.secondary" gutterBottom fontSize={"14px"}>
+              <b>RC :</b> {rc}
+            </Typography>
+          </Box>
+
           <Typography color="text.secondary" gutterBottom fontSize={"14px"}>
-            Shop code : {shopCode}
+           <b> Address :</b> {address}
           </Typography>
         </Box>
       </CardContent>
