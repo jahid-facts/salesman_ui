@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import AdminLayout from "../layouts/adminLayout/AdminLayout";
 import {
+  Autocomplete,
   Box,
   Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   Grid,
   MenuItem,
-  Popover,
   Select,
   TextField,
 } from "@mui/material";
@@ -20,7 +17,8 @@ import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet";
-import { Close, FilterAltRounded } from "@mui/icons-material";
+import { FilterAltRounded } from "@mui/icons-material";
+import { rcOptions } from "../components/RC";
 
 const ShopsAssign = () => {
   const [selectedCards, setSelectedCards] = useState([]);
@@ -31,9 +29,8 @@ const ShopsAssign = () => {
   const [isSubmitting, setisSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [filterShop, setFilterShop] = useState([]);
-  const [filter, setFilter] = useState(null);
+  const [value, setValue] = React.useState(null);
+  const [inputValue, setInputValue] = React.useState("");
 
   const handleCardClick = (cardId, isSelected) => {
     if (isSelected) {
@@ -42,18 +39,6 @@ const ShopsAssign = () => {
     } else {
       // Remove the card ID from the selectedCards array
       setSelectedCards(selectedCards.filter((id) => id !== cardId));
-    }
-  };
-
-  const fetchShops = async () => {
-    setLoading(true);
-    try {
-      const response = await getApi("shop");
-      setShopList(response.data.shop);
-    } catch (error) {
-      toast.error("An error occurred while fetching data.", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -70,7 +55,6 @@ const ShopsAssign = () => {
   };
 
   useEffect(() => {
-    fetchShops();
     fetchSalesman();
   }, []);
 
@@ -82,8 +66,6 @@ const ShopsAssign = () => {
     const formattedDate = date ? dayjs(date).format("YYYY-MM-DD") : "";
     setSelectedDate(formattedDate);
   };
-
-
 
   const handleSubmit = async () => {
     setisSubmitting(true);
@@ -111,54 +93,20 @@ const ShopsAssign = () => {
     }
   };
 
-  // filter
-  // filter option
-  const options = [
-    { label: "AC 1", value: "ac1" },
-    { label: "AC 2", value: "ac2" },
-    { label: "AC 3", value: "ac3" },
-    { label: "AC 4", value: "ac4" },
-    { label: "AC 5", value: "ac5" },
-    { label: "AC 6", value: "ac6" },
-    { label: "AC 7", value: "ac7" },
-  ];
-
-  const handleFilterOpen = (event) => {
-    setFilter(event.currentTarget);
-  };
-
-  const handleFilterClose = () => {
-    setFilter(null);
-  };
-
-  const handleFilterToggle = (filterValue) => {
+  // handle fillter
+  const handleFilter = async () => {
     setLoading(true);
-    const isFilterSelected = selectedFilters.includes(filterValue);
-
-    if (isFilterSelected) {
-      setSelectedFilters((prevFilters) =>
-        prevFilters.filter((filter) => filter !== filterValue)
-      );
-    } else {
-      setSelectedFilters((prevFilters) => [...prevFilters, filterValue]);
+    try {
+      const rc1 = value.value;
+      const response = await getApi(`rc-shop/${rc1}`);
+      setShopList(response?.data?.task);
+      toast.success(response?.data?.message);
+    } catch (error) {
+      toast.error("An error occurred while fetching data.");
+    } finally {
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (selectedFilters.length === 0) {
-      setFilterShop(shopList);
-    } else {
-      const filteredProperties = shopList.filter((data) => {
-        return selectedFilters.includes(data.rc);
-      });
-
-      setFilterShop(filteredProperties);
-    }
-    setLoading(false);
-  }, [selectedFilters, shopList]);
- 
-  console.log(selectedFilters);
-  console.log(shopList);
 
   return (
     <AdminLayout title={"Shops Assign"}>
@@ -226,20 +174,40 @@ const ShopsAssign = () => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <Box display={"flex"} justifyContent={"space-between"}>
-            <h4>Select shpos</h4>
+          <Box>
+            <h4>Select shops</h4>
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Box display={"flex"}>
+            <Autocomplete
+              size="small"
+              value={value}
+              onChange={(event, newValue) => {
+                setValue(newValue);
+              }}
+              inputValue={inputValue}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+              }}
+              id="controllable-states-demo"
+              options={rcOptions}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="select" />}
+            />
+
             <div>
               <Button
-                onClick={handleFilterOpen}
+                onClick={handleFilter}
                 sx={{
                   textTransform: "capitalize",
-                  borderRadius: "30px",
+                  ml: 2,
                 }}
-                variant="outlined"
+                variant="contained"
                 color="primary"
               >
                 <FilterAltRounded sx={{ color: "f3f3f3", pr: 1 }} />
-                Filters
+                Filter
               </Button>
             </div>
           </Box>
@@ -248,7 +216,7 @@ const ShopsAssign = () => {
         {loading ? (
           <CustomLoader />
         ) : (
-          filterShop
+          shopList
             .filter((item) => item.status === "active")
             .map((item) => (
               <Grid item xs={12} sm={6} md={4} key={item._id}>
@@ -264,51 +232,6 @@ const ShopsAssign = () => {
             ))
         )}
       </Grid>
-
-      {/* filter  */}
-      <Popover
-        open={Boolean(filter)}
-        anchorEl={filter}
-        onClose={handleFilterClose}
-        sx={{
-          top: "45px",
-        }}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <Box display={"flex"} flexDirection={"column"} p={3}>
-          <FormGroup>
-            {options.map((option, index) => (
-              <FormControlLabel
-                key={index}
-                control={
-                  <Checkbox
-                    checked={selectedFilters.includes(option.value)}
-                    onChange={() => handleFilterToggle(option.value)}
-                  />
-                }
-                label={option.label}
-                sx={{ textTransform: "capitalize" }}
-              />
-            ))}
-          </FormGroup>
-          <Button
-            size="small"
-            variant="contained"
-            color={"secondary"}
-            onClick={handleFilterClose}
-            sx={{ mt: 1, textTransform: "capitalize" }}
-          >
-            <Close sx={{ fontSize: "16px" }} /> Close
-          </Button>
-        </Box>
-      </Popover>
     </AdminLayout>
   );
 };

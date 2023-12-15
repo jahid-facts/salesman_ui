@@ -60,7 +60,7 @@ const SalesmanList = () => {
       switch (actionType) {
         case "delete":
           Swal.fire({
-            title: "Confirm delete",
+            title: "Confirm delete ?",
             text: "Are you sure you want to delete this user?",
             icon: "question",
             showCancelButton: true,
@@ -78,7 +78,7 @@ const SalesmanList = () => {
                     toast.success(res.data?.message);
                   })
                   .catch((err) => {
-                    toast.error("An error occurred while updating status");
+                    toast.error("An error occurred while deleting status");
                   })
                   .finally(() => {
                     fetchData();
@@ -123,7 +123,7 @@ const SalesmanList = () => {
               } catch (error) {
                 Swal.fire(
                   "Error",
-                  "An error occurred while  empty device id the shop.",
+                  "An error occurred while  empty device id the user.",
                   "error"
                 );
               }
@@ -352,7 +352,7 @@ const SalesmanList = () => {
       };
 
       await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}update-user/${userEdit.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}update-user/${itemId}`,
         data
       );
 
@@ -377,7 +377,7 @@ const SalesmanList = () => {
 
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}update-user-password/${userEdit.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}update-user-password/${itemId}`,
         {
           password: updatePassword,
         }

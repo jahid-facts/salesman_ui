@@ -51,8 +51,8 @@ const ShopsList = () => {
       switch (actionType) {
         case "delete":
           Swal.fire({
-            title: "Confirm Delete",
-            text: "Are you sure you want to active this shop?",
+            title: "Confirm Delete ?",
+            text: "Are you sure you want to delete this shop?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -80,7 +80,7 @@ const ShopsList = () => {
                 );
               }
             } else if (result.dismiss === Swal.DismissReason.cancel) {
-              Swal.fire("Cancelled", "The shop was not disabled.", "info");
+              Swal.fire("Cancelled", "The shop was not deleted.", "info");
             }
           });
           break;
@@ -106,7 +106,7 @@ const ShopsList = () => {
     { field: "id", headerName: "ID", width: 70 },
     { field: "name", headerName: "Shop name", width: 200 },
     { field: "shopCode", headerName: "Shop Code", width: 150 },
-    { field: "address", headerName: "Address", width: 200 },
+    { field: "address", headerName: "Owner name", width: 200 },
     { field: "rc", headerName: "RC", width: 100 },
     { field: "number", headerName: "Number", width: 200 },
     {

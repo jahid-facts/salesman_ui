@@ -48,7 +48,7 @@ const CheckboxCard = ({ id, title, shopCode, onCardClick, rc, address }) => {
           </Box>
 
           <Typography color="text.secondary" gutterBottom fontSize={"14px"}>
-           <b> Address :</b> {address}
+           <b> Owner name :</b> {address}
           </Typography>
         </Box>
       </CardContent>

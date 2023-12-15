@@ -23,6 +23,8 @@ import axios from "axios";
 import CustomLoader from "../components/customLoader/CustomLoader";
 import { BeatLoader } from "react-spinners";
 import { Helmet } from "react-helmet";
+import { formatDate, formatTime } from "../utils/Date";
+import Swal from "sweetalert2";
 
 const SalesmanTask = () => {
   const [selectedCards, setSelectedCards] = useState([]);
@@ -96,12 +98,43 @@ const SalesmanTask = () => {
     }
 
     try {
-      const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}task-delete/${itemId}`);
-
-      // If you want to update the UI immediately, you can do something like this:
-      const updatedShopList = shopList.filter((item) => item.id !== itemId);
-      setShopList(updatedShopList);
-      toast.success(response?.data?.message);
+      Swal.fire({
+        title: "Confirm delete ?",
+        text: "Are you sure you want to delete this task?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await axios
+              .delete(
+                `${process.env.REACT_APP_API_BASE_URL}task-delete/${itemId}`
+              )
+              .then((res) => {
+                // If you want to update the UI immediately, you can do something like this:
+                const updatedShopList = shopList.filter(
+                  (item) => item.id !== itemId
+                );
+                setShopList(updatedShopList);
+                toast.success(res?.data?.message);
+              })
+              .catch((err) => {
+                toast.error("An error occurred while deleting status");
+              });
+          } catch (error) {
+            Swal.fire(
+              "Error",
+              "An error occurred while  delete the task.",
+              "error"
+            );
+          }
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire("Cancelled", "The task was not deleted.", "info");
+        }
+      });
     } catch (error) {
       if (error.response) {
         toast.error(error?.response?.data[0]);
@@ -174,13 +207,13 @@ const SalesmanTask = () => {
               size="large"
               fullWidth
               disabled={submiting}
-              sx={{ mt: 8 }}
+              sx={{ mt: 8, textTransform: "capitalize" }}
             >
-              {submiting ? <BeatLoader color="#ff0000" /> : "Submit"}
+              {submiting ? <BeatLoader color="#ff0000" /> : "Filter"}
             </Button>
           </Grid>
           <Grid item xs={12}>
-            <h4>Assign shpos</h4>
+            <h4>Assign shops</h4>
           </Grid>
           {shopList.map((item) => (
             <Grid item xs={12} sm={6} md={4} key={item.id}>
@@ -191,7 +224,6 @@ const SalesmanTask = () => {
                 <CardContent
                   sx={{
                     display: "flex",
-                    alignItems: "center",
                     justifyContent: "space-around",
                   }}
                 >
@@ -210,17 +242,9 @@ const SalesmanTask = () => {
                       gutterBottom
                       fontSize={"14px"}
                     >
-                      <b> Address :</b> {item?.assign_by_shop?.address}
+                      <b>Owner name :</b> {item?.assign_by_shop?.address}
                     </Typography>
-                    <Box display={"flex"}>
-                      <Typography
-                        color="text.secondary"
-                        gutterBottom
-                        fontSize={"14px"}
-                        sx={{ mr: 2 }}
-                      >
-                        <b> Date :</b> {item?.assign_date}
-                      </Typography>
+                    <Box>
                       <Typography
                         color="text.secondary"
                         gutterBottom
@@ -228,16 +252,29 @@ const SalesmanTask = () => {
                       >
                         <b>RC :</b> {item?.assign_by_shop?.rc}
                       </Typography>
+                      {item?.status === "completed" && item?.distance && (
+                        <Typography
+                          color="text.secondary"
+                          gutterBottom
+                          fontSize={"14px"}
+                        >
+                          <b>Distance :</b> {item?.distance.toFixed(2)} m
+                        </Typography>
+                      )}
+
+                      {item?.status === "completed" && item?.updated_at && (
+                        <Typography
+                          color="text.secondary"
+                          gutterBottom
+                          fontSize={"14px"}
+                        >
+                          <b>Visited :</b>{" "}
+                          {`${formatDate(item?.updated_at)}, ${formatTime(
+                            item?.updated_at
+                          )}`}
+                        </Typography>
+                      )}
                     </Box>
-                    {item?.status === "completed" && item?.distance && (
-                      <Typography
-                        color="text.secondary"
-                        gutterBottom
-                        fontSize={"14px"}
-                      >
-                        Distance : {item?.distance} m
-                      </Typography>
-                    )}
                   </Box>
                   <Box>
                     <div>
@@ -251,16 +288,18 @@ const SalesmanTask = () => {
                         />
                       )}
                     </div>
-                    <Box textAlign={"right"} mt={1}>
-                      <IconButton onClick={() => taskDeleteHandle(item.id)}>
-                        <Delete
-                          sx={{
-                            color: "#ff0000",
-                            cursor: "pointer",
-                          }}
-                        />
-                      </IconButton>
-                    </Box>
+                    {item.status !== "completed" && (
+                      <Box textAlign={"right"} mt={1}>
+                        <IconButton onClick={() => taskDeleteHandle(item.id)}>
+                          <Delete
+                            sx={{
+                              color: "#ff0000",
+                              cursor: "pointer",
+                            }}
+                          />
+                        </IconButton>
+                      </Box>
+                    )}
                   </Box>
                 </CardContent>
               </Card>

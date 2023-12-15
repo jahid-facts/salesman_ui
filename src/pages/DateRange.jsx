@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import AdminLayout from "../layouts/adminLayout/AdminLayout";
-import { Button, Grid, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { getApi, postApi } from "../config/configAxios";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
@@ -9,6 +17,7 @@ import { toast } from "react-toastify";
 import CustomLoader from "../components/customLoader/CustomLoader";
 import { BeatLoader } from "react-spinners";
 import { Helmet } from "react-helmet";
+import { ClearRounded } from "@mui/icons-material";
 
 const DateRange = () => {
   const [salesman, setSalesman] = useState([]);
@@ -99,8 +108,16 @@ const DateRange = () => {
     "Day 9",
   ];
 
+  const handleClearDate = (day) => {
+    setFindUser((prevFindUser) => ({
+      ...prevFindUser,
+      [day]: null,
+    }));
+  };
+  
+
   return (
-    <AdminLayout title={"Date range"}>
+    <AdminLayout title={"Date Range"}>
       <Helmet>
         <title>Date range assign</title>
       </Helmet>
@@ -138,7 +155,7 @@ const DateRange = () => {
           {dayLabels.map((label, index) => (
             <Grid item xs={12} md={4} key={index}>
               <h4>{label}</h4>
-              <div>
+              <Box display={"flex"}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={findUser && dayjs(findUser[`day_${index + 1}`])}
@@ -156,7 +173,14 @@ const DateRange = () => {
                     // Add more props for customization
                   />
                 </LocalizationProvider>
-              </div>
+                <div>
+                  <IconButton
+                    onClick={() => handleClearDate(`day_${index + 1}`)}
+                  >
+                    <ClearRounded />
+                  </IconButton>
+                </div>
+              </Box>
             </Grid>
           ))}
           <Grid item xs={12}>
